@@ -42,7 +42,7 @@ define_color_names() {
       _def_color $longcolorname     $attrcode $fgcolorcode
       _def_color ${longcolorname}Fg $attrcode $fgcolorcode
       _def_color ${longcolorname}Bg $attrcode $bgcolorcode
-      (( x++ ))
+      x=$(( x+1 ))
     done
   }
 

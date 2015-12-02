@@ -21,7 +21,7 @@ function git_prompt_dir() {
 }
 
 function echoc() {
-  echo -e "${1}$2${ResetColor}" | sed 's/\\\]//g'  | sed 's/\\\[//g'
+  echo -e "${1}$2" | sed 's/\\\]//g'  | sed 's/\\\[//g'
 }
 
 function get_theme() {
@@ -217,7 +217,7 @@ function git_prompt_config() {
 
   # There are two files related to colors:
   #
-  #  prompt-colors.sh -- sets generic color names suitable for bash 'PS1' prompt
+  #  prompt-colors.sh -- sets generic color names suitable for bash `PS12` prompt
   #  git-prompt-colors.sh -- sets the GIT_PROMPT color scheme, using names from prompt-colors.sh
 
   git_prompt_load_colors
@@ -310,7 +310,7 @@ function we_are_on_repo() {
 function update_old_git_prompt() {
   local in_repo=$(we_are_on_repo)
   if [[ $GIT_PROMPT_OLD_DIR_WAS_GIT = 0 ]]; then
-    OLD_GITPROMPT=$PS1
+    OLD_GITPROMPT=$PS12
   fi
 
   GIT_PROMPT_OLD_DIR_WAS_GIT=$in_repo
@@ -322,7 +322,7 @@ function setGitPrompt() {
   local repo=$(git rev-parse --show-toplevel 2> /dev/null)
   if [[ ! -e "$repo" ]] && [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
     # we do not permit bash-git-prompt outside git repos, so nothing to do
-    PS1="$OLD_GITPROMPT"
+    PS12="$OLD_GITPROMPT"
     return
   fi
 
@@ -332,7 +332,7 @@ function setGitPrompt() {
   git_prompt_config
 
   if [[ ! -e "$repo" ]] || [[ "$GIT_PROMPT_DISABLE" = 1 ]]; then
-    PS1="$EMPTY_PROMPT"
+    PS12="$EMPTY_PROMPT"
     return
   fi
 
@@ -361,7 +361,7 @@ function setGitPrompt() {
   unset OLD_GIT_PROMPT_SHOW_UNTRACKED_FILES
 
   if [[ "$GIT_PROMPT_IGNORE" = 1 ]]; then
-    PS1="$EMPTY_PROMPT"
+    PS12="$EMPTY_PROMPT"
     return
   fi
 
@@ -519,7 +519,7 @@ function updatePrompt() {
 
   local NEW_PROMPT="$EMPTY_PROMPT"
   if [[ -n "$git_status_fields" ]]; then
-    local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}\${GIT_BRANCH}${ResetColor}${GIT_FORMATTED_UPSTREAM}"
+    local STATUS_PREFIX="${PROMPT_LEADING_SPACE}${GIT_PROMPT_PREFIX}${GIT_PROMPT_BRANCH}\${GIT_BRANCH}${GIT_FORMATTED_UPSTREAM}"
     local STATUS=""
 
     # __add_status KIND VALEXPR INSERT
@@ -534,15 +534,15 @@ function updatePrompt() {
       fi
       if eval "test $v" ; then
         if [[ $# -lt 2 || "$3" != '-' ]] && [[ "x$__GIT_PROMPT_SHOW_CHANGED_FILES_COUNT" == "x1" || "x$1" == "xREMOTE" ]]; then
-          __add_status "\$GIT_PROMPT_$1\$GIT_$1\$ResetColor"
+          __add_status "\$GIT_PROMPT_$1\$GIT_$1"
         else
-          __add_status "\$GIT_PROMPT_$1\$ResetColor"
+          __add_status "\$GIT_PROMPT_$1"
         fi
       fi
     }
 
     __add_gitvar_status() {
-      __add_status "\$GIT_PROMPT_$1\$GIT_$1\$ResetColor"
+      __add_status "\$GIT_PROMPT_$1\$GIT_$1"
     }
 
     # __add_status SOMETEXT
@@ -558,14 +558,14 @@ function updatePrompt() {
     __chk_gitvar_status 'UNTRACKED'  '-ne 0'
     __chk_gitvar_status 'STASHED'    '-ne 0'
     __chk_gitvar_status 'CLEAN'      '-eq 1'   -
-    __add_status        "$ResetColor$GIT_PROMPT_SUFFIX"
+    __add_status        "$GIT_PROMPT_SUFFIX"
 
     NEW_PROMPT="$(gp_add_virtualenv_to_prompt)$PROMPT_START$($prompt_callback)$STATUS_PREFIX$STATUS$PROMPT_END"
   else
     NEW_PROMPT="$EMPTY_PROMPT"
   fi
 
-  PS1="${NEW_PROMPT//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}${ResetColor}}"
+  PS12="${NEW_PROMPT//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
   command rm "$GIT_INDEX_PRIVATE" 2>/dev/null
 }
 
@@ -622,7 +622,7 @@ function git_prompt_toggle() {
 
 function gp_install_prompt {
   if [ -z "$OLD_GITPROMPT" ]; then
-    OLD_GITPROMPT=$PS1
+    OLD_GITPROMPT=$PS12
   fi
 
   if [ -z "$GIT_PROMPT_OLD_DIR_WAS_GIT" ]; then
